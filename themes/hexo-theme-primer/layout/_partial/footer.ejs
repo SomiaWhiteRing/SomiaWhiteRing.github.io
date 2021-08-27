@@ -1,0 +1,39 @@
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2021
+                <span title="yumemor">SomiaWhiteRing</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/SomiaWhiteRing" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            <% for (var nav in theme.menus) { %>
+                  <%
+                    var title = theme.menus[nav].name;
+                    var href = theme.menus[nav].link;
+                    var link = "^" + href;  
+                    var target = theme.menus[nav].target;
+                  %>
+                  <li>
+                    <a href="<%- url_for(href) %>" <%if(target){%>target="<%=target%>"<%}%> title="<%= title %>"><%= title %></a>
+                  </li>
+            <% } %>
+        </ul>
+
+        <div>
+            <span title="hexo">由 <a target="_blank" rel="noopener" href="https://hexo.io/">hexo</a> 驱动</span>
+            <span title="yumemor">并使用基于 <a target="_blank" rel="noopener" href="https://github.com/yumemor/hexo-theme-primer">primer</a> 的主题</span><br>
+        </div>
+        
+    </div>
+</footer>

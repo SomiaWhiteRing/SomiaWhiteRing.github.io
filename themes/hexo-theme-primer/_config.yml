@@ -1,0 +1,38 @@
+menus:
+	- 
+		name: Home
+		link: /
+	- 
+		name: 分类
+		link: categories/
+	- 
+		name: 开源项目
+		link: open-source/
+
+profile:
+	location: FuJian, China
+	github: SomiaWhiteRing
+	#stackoverflow: 
+		#title: yumemor
+		#href: http://stackoverflow.com/users/5662132/yumemor
+	#organization: 组织/公司
+
+github: 
+	username: SomiaWhiteRing
+  popular_repos: [vue-notes,JS2048]
+
+search: local #google｜local
+
+
+# 多说已关闭 目前支持 Disqus 和 Gitmet(两者选一)
+
+# Disqus
+# disqus_username:
+
+#Giemtn 是基于repo的issus的评论系统，项目地址: https://github.com/imsun/gitment
+#在 https://github.com/settings/applications/new 注册
+
+gitment_owner: SomiaWhiteRing
+gitment_repo: blog-gitment
+gitment_client_id: 28c298a3ce77869e79d3
+gitment_client_secret: 7a1bbd121cba3e328121ef4e42bdd383207cc7b9
