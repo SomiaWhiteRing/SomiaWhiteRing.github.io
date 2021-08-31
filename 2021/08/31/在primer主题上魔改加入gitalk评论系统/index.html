@@ -95,23 +95,7 @@
 <p>首先是发现自己把<code>gitalk</code>的名字打成了<code>gittalk</code>，打开搜索工具发现出现了一百多条gittalk这个本来不该存在的名字。一键全局替换……好的没有搞定bug依旧好端端的呆在那里。</p>
 <p>之后我又拿出原本gitment版本渲染完成的界面进行比对，发现修改成gitalk后浏览器的<code>container</code>标签内不再渲染内容而这本来应该渲染出评论框，于是我把目光投向了渲染出评论的<code>render</code>……结果很相近了，但只差一步，我倒在自己看不懂的六万多行的代码之海里找不着头绪。</p>
 <p>就在此时我才突然想到也许应该再看看官方文档……直到这个时候我才发现，<code>gitalk</code>的评论区是渲染在<code>gitalk-container</code>这个标签里的，也就是说必须要把<code>container</code>改为<code>gitalk-container</code>才能正常运行。于是我试着再度更改了<code>gitment-comments</code>的写法……</p>
-<p>``</p>
-<div class="comments">
-    <div id="gitalk-container"></div>
-        <%- js('js/gitalk') %>
-        <script>
-            var gitalk = new Gitalk({
-                clientID: "<%= theme.gitment_client_id %>",
-                clientSecret: "<%= theme.gitment_client_secret %>",
-                repo: '<%= theme.gitment_repo %>',
-                owner: '<%= theme.gitment_owner %>',
-                admin: ['<%= theme.gitment_owner %>'],
-                id: '<%=url%>',
-            })
-        gitalk.render('gitalk-container')
-        </script>
-</div>
-```
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;gitalk-container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gitalk&#x27;) %&gt;</span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            var gitalk = new Gitalk(&#123;</span><br><span class="line">                clientID: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                clientSecret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                admin: [&#x27;&lt;%= theme.gitment_owner %&gt;&#x27;],</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">            &#125;)</span><br><span class="line">        gitalk.render(&#x27;gitalk-container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
 
 <p>好的来吧我要按下去(<code>hexo s</code>)了！</p>
 <p><img src="OHHHHHHHH.png"></p>
