@@ -94,9 +94,6 @@
 
             
 <div class="comments">
-    
-<script src="/js/md5.js"></script>
-
     <div id="gitalk-container"></div>
         
 <script src="/js/gitalk.js"></script>
@@ -108,7 +105,7 @@
                 repo: 'blog-gitment',
                 owner: 'SomiaWhiteRing',
                 admin: ['SomiaWhiteRing'],
-                id: hex_md5('/2021/08/25/hello-world/'),
+                id: decodeURI('/2021/08/25/hello-world/'),
             })
         gitalk.render('gitalk-container')
         </script>
