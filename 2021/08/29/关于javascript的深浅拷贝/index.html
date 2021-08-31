@@ -110,19 +110,18 @@
 <div class="comments">
     <div id="container"></div>
         
-<script src="/js/gitment.browser.js"></script>
+<script src="/js/gittalk.js"></script>
 
-         <script>
-            var gitment = new Gitment({
-                id: '/2021/08/29/%E5%85%B3%E4%BA%8Ejavascript%E7%9A%84%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/',
-                owner: 'SomiaWhiteRing',
+        <script>
+            var gitalk = new Gitalk({
+                clientID: "28c298a3ce77869e79d3",
+                clientSecret: "7a1bbd121cba3e328121ef4e42bdd383207cc7b9",
                 repo: 'blog-gitment',
-                oauth: {
-                    client_id: "28c298a3ce77869e79d3",
-                    client_secret: "7a1bbd121cba3e328121ef4e42bdd383207cc7b9",
-                }
+                owner: 'SomiaWhiteRing',
+                admin: ['SomiaWhiteRing',],
+                id: '/2021/08/29/%E5%85%B3%E4%BA%8Ejavascript%E7%9A%84%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/',
             })
-        gitment.render('container')
+        gitalk.render('gitalk-container')
         </script>
 </div>
 

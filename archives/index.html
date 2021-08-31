@@ -78,6 +78,66 @@
     <div class="columns">
         <div class="column two-thirds">
             
+                  <article id="post-在primer主题上魔改加入gittalk评论系统" class="repo-list">
+    <div class="repo-list-item" >
+      <h3 class="repo-list-name" itemprop="name">
+        
+  
+      <a class="article-title" href="/2021/08/31/%E5%9C%A8primer%E4%B8%BB%E9%A2%98%E4%B8%8A%E9%AD%94%E6%94%B9%E5%8A%A0%E5%85%A5gittalk%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/">在primer主题上魔改加入gittalk评论系统</a>
+  
+
+      </h3>
+      <div class="repo-list-description">
+        
+          <p>primer这个主题最后一次更新的时候，多说才刚刚关站不久，主题的制作者留下了Disqus和gitment两个备选项就对这个项目撒手不管脱离战线。而2021年的今天，gitment也成为了被放弃维护的烂尾项目的一员，disqus则是被封印在墙外难以正常使用。于是作为迟到了好几年的使用者，必须为评论系统找一份新的归宿——而顺理成章的，我挑上了以gitment继任者自居的gittalk。</p>
+<!-- hide -->
+
+<h3 id="找出gitment在原项目中的配置"><a href="#找出gitment在原项目中的配置" class="headerlink" title="找出gitment在原项目中的配置"></a>找出gitment在原项目中的配置</h3>
+
+<p>多亏了vscode的全局搜索功能，我们很容易就能够定位到项目中运用了gitment的文件。其中，<code>_config.yml</code>指示了传达给gitment插件的参数，<code>gitment-comments.js</code>与<code>article-post.ejs</code>是负责将gitment插件实施到页面的html模块，<code>style.styl</code>负责引入gitment的css文件，<code>default.css</code>与<code>gitment.browser.js</code>则就是gitment插件的js与css文件。接下来，就让我们手把手的引领gittalk对gitment进行一次“鸠占鹊巢”。</p>
+<h3 id="先从html部分开始讲起"><a href="#先从html部分开始讲起" class="headerlink" title="先从html部分开始讲起"></a>先从html部分开始讲起</h3><p>让我们先来看看<code>article-post.ejs</code>中关于引入gitment的部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;%if(theme.disqus_username)&#123;%&gt;</span><br><span class="line">  &lt;%- partial(&#x27;_widget/disqus-comments&#x27;,&#123;</span><br><span class="line">      key: post.slug,</span><br><span class="line">      title: post.title,</span><br><span class="line">      url: config.url+url_for(post.path)</span><br><span class="line">  &#125;) %&gt;</span><br><span class="line">&lt;%&#125; else &#123;%&gt;</span><br><span class="line">  &lt;%- partial(&#x27;_widget/gitment-comments&#x27;,&#123;</span><br><span class="line">      key: post.slug,</span><br><span class="line">      title: post.title,</span><br><span class="line">      url: url_for(post.path)</span><br><span class="line">  &#125;) %&gt;</span><br><span class="line">&lt;%&#125;%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以简单的看出，如果你在<code>_config.yml</code>中填入了<code>disqus_username</code>，这个模块就会引导<code>_widget/disqus-comments</code>以渲染disqus评论区，否则会引导<code>_widget/gitment-comments</code>来渲染gitment评论区。在gitment已经不适用的现在，我们可以将后半部分的<code>gitment-comments</code>改为<br><code>gittalk-comments</code>，并在<code>_widget</code>文件夹下创建一个名称相对应的渲染模块。<br>至于这个渲染模块怎么创建，我们可以参考参考<code>gitment-comments</code>的写法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gitment.browser&#x27;) %&gt;</span><br><span class="line">         &lt;script&gt;</span><br><span class="line">            var gitment = new Gitment(&#123;</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                oauth: &#123;</span><br><span class="line">                    client_id: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                    client_secret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        gitment.render(&#x27;container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>同时，我们可以拿出gittalk文档中的引用方法进行比对：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var gitalk = new Gitalk(&#123;</span><br><span class="line">  clientID: &#x27;GitHub Application Client ID&#x27;,</span><br><span class="line">  clientSecret: &#x27;GitHub Application Client Secret&#x27;,</span><br><span class="line">  repo: &#x27;GitHub repo&#x27;,</span><br><span class="line">  owner: &#x27;GitHub repo owner&#x27;,</span><br><span class="line">  admin: [&#x27;GitHub repo owner and collaborators, only these guys can initialize github issues&#x27;],</span><br><span class="line">  id: location.pathname,      // Ensure uniqueness and length less than 50</span><br><span class="line">  distractionFreeMode: false  // Facebook-like distraction free mode</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">gitalk.render(&#x27;gitalk-container&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，gittalk与gitment的设计方式是一脉相承的。我们只需要依照gitment中配置好的接口将gittalk的语句改头换面进去就行了。下面展示的是修改完成之后的结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gittalk&#x27;) %&gt;</span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            var gitalk = new Gitalk(&#123;</span><br><span class="line">                clientID: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                clientSecret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                admin: [&#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,],</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">            &#125;)</span><br><span class="line">        gitalk.render(&#x27;gitalk-container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="在本地引入gittalk的css与js库"><a href="#在本地引入gittalk的css与js库" class="headerlink" title="在本地引入gittalk的css与js库"></a>在本地引入gittalk的css与js库</h3><p>在前文里我们修改了gitment中属于html的部分。而js与css部分则更加单纯——我们只需要从gittalk的github仓库上拖下来对应的js与css文件再完成引入就行了。js的引入我们已经在上文中做了修改（<code>&lt;%- js(&#39;js/gitment.browser&#39;) %&gt;</code>被修改为<code>&lt;%- js(&#39;js/gittalk&#39;) %&gt;</code>），css的引入则位于<code>style.styl</code>文件中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//gitmnet</span><br><span class="line">@import &quot;_vendor/gitment/default.css&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们将原本的引入文本注释掉，重新加入gittalk的css</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//gitment</span><br><span class="line">//@import &quot;_vendor/gitment/default.css&quot;</span><br><span class="line"></span><br><span class="line">//gittalk</span><br><span class="line">@import &quot;_vendor/gittalk/default.css&quot;</span><br></pre></td></tr></table></figure>
+
+<p>最后将gittalk仓库中dist文件夹里的文件拖到本地我们写好的对应位置，gittalk的引入就大功告成！</p>
+
+        
+      </div>
+      <p class="repo-list-meta">
+        <span class="meta-info">
+          <span class="octicon octicon-calendar"></span>
+           <time datetime="2021-08-31T05:58:49.000Z" itemprop="datePublished">2021-08-31</time>
+        </span>
+
+        
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href='/categories/Blog/' title=''>Blog</a>
+          </span>
+        
+      
+        <!--
+          
+        -->
+
+      </p>
+    </div>
+  </article>
+            
                   <article id="post-关于javascript的深浅拷贝" class="repo-list">
     <div class="repo-list-item" >
       <h3 class="repo-list-name" itemprop="name">
