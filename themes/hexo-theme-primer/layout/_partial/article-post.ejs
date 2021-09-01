@@ -11,19 +11,13 @@
             <% } %>
 
             
-            <%if(theme.disqus_username){%>
-                <%- partial('_widget/disqus-comments',{
-                    key: post.slug,
-                    title: post.title,
-                    url: config.url+url_for(post.path)
-                }) %>
-             <%} else {%>
-                <%- partial('_widget/gitment-comments',{
-                    key: post.slug,
-                    title: post.title,
-                    url: url_for(post.path)
-                }) %>
-            <%}%>
+
+            <%- partial('_widget/gitalk-comments',{
+                key: post.slug,
+                title: post.title,
+                url: url_for(post.path)
+            }) %>
+            
 
         </div>
         <div class="column one-fourth">
