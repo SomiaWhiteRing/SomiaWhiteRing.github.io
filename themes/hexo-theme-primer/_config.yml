@@ -8,6 +8,9 @@ menus:
 	- 
 		name: 开源项目
 		link: open-source/
+	- 
+		name: 留言板
+		link: message/
 
 profile:
 	location: FuJian, China

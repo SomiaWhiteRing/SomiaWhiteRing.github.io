@@ -102,6 +102,9 @@ theme: hexo-theme-primer
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: git
-  repository: https://github.com/SomiaWhiteRing/SomiaWhiteRing.github.io
+- type: git
+  repo: https://e.coding.net/somiawhitering/myblog/somiawhitering.coding.me
+  branch: master
+- type: git
+  repo: https://github.com/SomiaWhiteRing/SomiaWhiteRing.github.io
   branch: main

@@ -8,13 +8,13 @@ primer这个主题最后一次更新的时候，多说才刚刚关站不久，�
 
 <!-- more -->
 
-### 找出gitment在原项目中的配置
+## 找出gitment在原项目中的配置
 
 ![](vscode的搜索结果.png)
 
 多亏了vscode的全局搜索功能，我们很容易就能够定位到项目中运用了gitment的文件。其中，`_config.yml`指示了传达给gitment插件的参数，`gitment-comments.js`与`article-post.ejs`是负责将gitment插件实施到页面的html模块，`style.styl`负责引入gitment的css文件，`default.css`与`gitment.browser.js`则就是gitment插件的js与css文件。接下来，就让我们手把手的引领gitalk对gitment进行一次“鸠占鹊巢”。
 
-### 先从html部分开始讲起
+## 先从html部分开始讲起
 
 让我们先来看看`article-post.ejs`中关于引入gitment的部分：
 
@@ -93,7 +93,7 @@ gitalk.render('gitalk-container')
 </div>
 ```
 
-### 在本地引入gitalk的css与js库
+## 在本地引入gitalk的css与js库
 
 在前文里我们修改了gitment中属于html的部分。而js与css部分则更加单纯——我们只需要从gitalk的github仓库上拖下来对应的js与css文件再完成引入就行了。js的引入我们已经在上文中做了修改（`<%- js('js/gitment.browser') %>`被修改为`<%- js('js/gitalk') %>`），css的引入则位于`style.styl`文件中：
 
@@ -118,7 +118,7 @@ gitalk.render('gitalk-container')
 
 笑死，我又在写bug哦。
 
-### Bug排除
+## Bug排除
 
 然后，我开启了漫长的查bug之旅……
 
@@ -152,7 +152,7 @@ gitalk.render('gitalk-container')
 
 <font size=6>大 功 告 成！</font>
 
-### 碎碎念
+## 碎碎念
 
 这次折腾完加上上一篇感觉得整合整合把自己改掉的部分丢到自己fork的那个分支上……花了这么多时间折腾上这些只是这样写成博客太可惜了。话说回来这样算不算参加开源项目？所以那些参加开源项目的人都是用这种心情去改别人的代码的吗？！（哭笑不得）
 
