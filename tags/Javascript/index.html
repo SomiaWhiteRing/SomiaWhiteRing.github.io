@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>苍旻之匣</title>
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/lib/fancybox/jquery.fancybox-1.3.4.css">
+
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body class="home">
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/" title="苍旻之匣"><span class="octicon octicon-mark-github"></span> 苍旻之匣</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="分类">分类</a>
+        
+              
+              <a href="/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="开源项目">开源项目</a>
+        
+              
+              <a href="/message/"  class=" site-header-nav-item hvr-underline-from-center" title="留言板">留言板</a>
+        
+      </nav>
+  </div>
+</header>
+
+	<section class="banner-false">
+    <div class="collection-head">
+        <div class="container">
+            <div class="collection-title">
+                <h1 class="collection-header" id="site-description">
+                    苍旻的代码箱子
+                </h1>
+                <div class="collection-info">
+                    
+                    
+                        <span class="meta-info">
+                            
+                                <span class="octicon octicon-location">
+                                   
+                                        FuJian, China
+                                    
+                                </span>
+                                
+                            
+                        </span>
+                    
+                        <span class="meta-info">
+                            
+                                <span class="octicon octicon-mark-github">
+                                   
+                                </span>
+                                
+                                    <a href="http://github.com/SomiaWhiteRing" target="_blank">SomiaWhiteRing</a>
+                                
+                            
+                        </span>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+	   <section class="container">
+    <div class="columns">
+        <div class="column two-thirds">
+            
+                
+                      <article id="post-关于javascript的深浅拷贝" class="repo-list">
+    <div class="repo-list-item" >
+      <h3 class="repo-list-name" itemprop="name">
+        
+  
+      <a class="article-title" href="/2021/08/29/%E5%85%B3%E4%BA%8Ejavascript%E7%9A%84%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/">关于javascript的深浅拷贝</a>
+  
+
+      </h3>
+      <div class="repo-list-description">
+        
+          <p>虽然照着书本了解过深拷贝和浅拷贝的大概概念，但只是有听没有懂。直到今天在bigfrontend上做题的时候才因为这件事翻了个大跟头。</p>
+        
+      </div>
+      <p class="repo-list-meta">
+        <span class="meta-info">
+          <span class="octicon octicon-calendar"></span>
+           <time datetime="2021-08-29T08:56:13.000Z" itemprop="datePublished">2021-08-29</time>
+        </span>
+
+        
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href='/categories/Javascript/' title=''>Javascript</a>
+          </span>
+        
+      
+        <!--
+          
+            <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Javascript/" rel="tag">Javascript</a></li></ul>
+          
+        -->
+
+      </p>
+    </div>
+  </article>
+                
+            
+        </div>
+        <div class="column one-third">
+          <!--处理未安装 search 插件 默认 Google 搜索-->
+ 
+
+<h3>Search</h3>
+
+<div id="site_search">
+
+	<!-- Google -->
+	
+		<form action="http://www.google.com/search?" data-site="">
+	    	<input type="text" id="search_box" name="q" placeholder="Search">
+	    	<button type="button" class="btn btn-default" id="site_search_do"><span class="octicon octicon-search"></span></button>
+	    </form>
+	
+
+	<!-- 本地搜索 -->
+	
+
+</div>
+
+<h3>Popular Repositories</h3>
+    <div class="popular-container"></div>
+    
+    <script type="text/template" id="popular-list-template">
+        <a href="{%=clone_url%}" class="card text-center" target="_blank">
+            <div class="thumbnail">
+                <div class="card-image geopattern" data-pattern-id="{%=name%}">
+                    <div class="card-image-cell">
+                        <h3 class="card-title">
+                            {%=name%}
+                        </h3>
+                    </div>
+                </div>
+                <div class="caption">
+                    <div class="card-description">
+                        <p class="card-text">
+                            {%=description%}
+                        </p>
+                    </div>
+                    <div class="card-text">
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="{%=stargazers_count%} stars">
+                            <span class="octicon octicon-star"></span> {%=stargazers_count%}
+                        </span>
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="{%=forks_count%} forks">
+                            <span class="octicon octicon-git-branch"></span> {%=forks_count%}
+                        </span>
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="最后更新时间：{%=updated_at%}">
+                            <span class="octicon octicon-clock"></span>
+                            <time datetime="{%=updated_at%}">{%=updated_at%}</time>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </script>
+
+    
+<script src="/js/baiduTemplate.js"></script>
+
+    <script type="text/javascript">
+        var popular_repos = function(){
+
+            var baiduTpl = new Object();
+
+            var handleTpl = function(){
+                baiduTpl.popular_list = baidu.template("popular-list-template");
+            };
+
+            var handleGithub = function(){
+                var popularContainer = $(".popular-container");
+
+                var repos = "vue-notes,JS2048".split(",");
+                for(var i in repos){
+                    var name = repos[i];
+                    $.get("https://api.github.com/repos/SomiaWhiteRing/"+name,handle);
+                }
+
+                function handle(result){
+                    result.updated_at = result.updated_at.split("T")[0];
+                    if(result){
+                        var html = baiduTpl.popular_list(result);
+                        popularContainer.append(html);
+                        $(".geopattern").each(function(){           
+                            $(this).geopattern($(this).data('pattern-id'));
+                        });
+                    }
+                }
+            };
+
+            return {
+                init:function(){
+                    handleTpl();
+                    handleGithub();
+                }
+            }
+        }; 
+        $(popular_repos().init);
+    </script>
+
+
+<h3>Links</h3>
+
+<table border="0">
+  <tbody>
+    <tr><td>
+      <a href="https://somiawhitering.github.io/JS2048/" target="_blank">JS2048在线体验地址</a>
+    </td></tr>
+    <tr><td>
+      <a href="https://somiawhitering.github.io/vue-notes/#/home/User" target="_blank">轻记事在线体验地址</a>
+    </td></tr>
+  </tbody></table>
+
+        </div>
+    </div>
+
+    
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2021
+                <span title="yumemor">SomiaWhiteRing</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/SomiaWhiteRing" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/categories/"  title="分类">分类</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/open-source/"  title="开源项目">开源项目</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/message/"  title="留言板">留言板</a>
+                  </li>
+            
+        </ul>
+
+        <div>
+            <span title="hexo">由 <a target="_blank" rel="noopener" href="https://hexo.io/">hexo</a> 驱动</span>
+            <span title="yumemor">并使用基于 <a target="_blank" rel="noopener" href="https://github.com/yumemor/hexo-theme-primer">primer</a> 的主题</span><br>
+        </div>
+        
+    </div>
+</footer>
+
+		
+<script src="/js/geopattern.js"></script>
+
+		
+<script src="/js/highlight.pack.js"></script>
+
+		
+<script src="/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+		
+
+		
+<script src="/js/index.js"></script>
+
+
+		 
+<script src="/js/popular_repo.js"></script>
+ 
+
+	</body>
+</html>

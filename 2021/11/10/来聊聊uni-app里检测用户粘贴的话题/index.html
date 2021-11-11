@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>苍旻之匣 | 来聊聊uni-app里检测用户粘贴的话题</title>
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/lib/fancybox/jquery.fancybox-1.3.4.css">
+
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/" title="苍旻之匣"><span class="octicon octicon-mark-github"></span> 苍旻之匣</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="分类">分类</a>
+        
+              
+              <a href="/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="开源项目">开源项目</a>
+        
+              
+              <a href="/message/"  class=" site-header-nav-item hvr-underline-from-center" title="留言板">留言板</a>
+        
+      </nav>
+  </div>
+</header>
+
+	
+<section class="collection-head geopattern" data-pattern-id="来聊聊uni-app里检测用户粘贴的话题" >
+    <div class="container">
+        <div class="collection-title">
+            <h1 class="collection-header">
+                来聊聊uni-app里检测用户粘贴的话题
+            </h1>
+            
+                <div class="collection-info">
+                    <span class="meta-info">
+                        <span class="octicon octicon-calendar"></span>
+                        <time datetime="2021-11-10T11:40:38.000Z" itemprop="datePublished">2021-11-10</time>
+                    </span>
+                    
+                        <span class="meta-info">
+                            <span class="octicon octicon-file-directory"></span>
+                            <a href='/categories/uni-app/' title=''>uni-app</a>
+                        </span>
+                    
+                </div>
+            
+        </div>
+    </div>
+</section>
+	<section class="container">
+    <div class="columns">
+        <div class="column  three-fourths " >
+            <article class="article-content markdown-body">
+                <p>前言暂略，总之今天苍旻一如既往地和issues搏斗的时候，收到了这么一个需求：</p>
+<p><img src="%E5%AF%86%E7%A0%81%E6%A1%86%E4%B8%AD%E6%9C%AA%E9%99%90%E5%88%B6%E4%B8%8D%E5%8F%AF%E7%B2%98%E8%B4%B4%E8%BE%93%E5%85%A5.png" alt="看起来很简单对吧"></p>
+<p>想着这有什么的难的的苍旻随手按了个确定，然后就寻找起了解决办法——然而他这时还没想到的是，他手头的工具不是延展性高到无所不能的原生HTML三件套；也不是虽然API压得乱七八糟但好歹有无数人陪着一同戴着镣铐跳舞的微信wxml；而是套了两层三层娃，为了兼容性在两者的语法中撕开一条血路的uni-app。</p>
+<span id="more"></span>
+
+<h2 id="原生写法——什么的果然行不通"><a href="#原生写法——什么的果然行不通" class="headerlink" title="原生写法——什么的果然行不通"></a>原生写法——什么的果然行不通</h2><p><code>onpaste</code> 是个相当老牌的检测粘贴事件了。虽然不在W3C标准里，但从IE8开始的所有浏览器都有提供对它的支持。它的效果也正如其名，当指定的标签中发生粘贴事件时触发对应的函数——也许比起 <code>onpaste</code>，人们对他的孪生兄弟 <code>oncopy</code> 会更加熟悉。找了半天终于找到想要的资料准备选中复制，却在内容被收进剪贴板的前一刻被唐突打断进而跳出诱导关注微信公众号或者付费的窗口，往往就是这个事件的杰作。</p>
+<p>但是理所当然的，这种旮沓角落里的冷门事件入不了微信的法眼。哪怕在最外层的view里放进这个事件，也不管怎么按下粘贴都不会有任何反应——甚至连个报错都没有就直接被当成代码中的杂质无视掉了。</p>
+<h2 id="啊等等，小程序这不是有自己的解法吗？"><a href="#啊等等，小程序这不是有自己的解法吗？" class="headerlink" title="啊等等，小程序这不是有自己的解法吗？"></a>啊等等，小程序这不是有自己的解法吗？</h2><p>因为实际开发中需要用到这个事件的场景意外的多，微信开放社区里时不时就会冒出相关的吐槽。经过多年零零星星的讨论，社区里的人逐渐形成一项共识：使用微信为 <code>input</code> 组件提供的 <code>bindinput</code> 能力，通过打迂回战的方式来解决问题。</p>
+<p>这场迂回战究竟要怎么打呢？这就不得不来讲讲 <code>bindinput</code> 的能力了： <code>bindinput</code> 能够实时检测小程序中最新的输入，并以 <code>&#123;value, cursor, keyCode&#125;</code> 的格式返回。所谓的迂回战法，就是每次输入都检测一次这个 <code>value</code> 值的长度，倘若 <code>value.length &gt; 1</code> 就代表用户并不是通过键盘正常输入——也就可以认为是使用了粘贴键。而在这时立刻删去输入框中与 <code>value</code> 等长的字符，就能做到和禁止粘贴完全相同的效果。</p>
+<p>看起来简直是天衣无缝的计划——事实上也毫无漏洞，毕竟使用这个事件的场景基本不是密码就是银行卡号，唯一的漏洞如邮箱后缀之类的定型文也基本都在事件的狩猎范围之外。而在我兴致勃勃的想要用上这一招的时候，开发者工具的报错给了我当头一棒：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Component &quot;pages/login/login&quot; does not have a method &quot;testPaste&quot; to handle event &quot;input&quot;.</span><br></pre></td></tr></table></figure>
+
+<h2 id="结果说到底还是得靠自己"><a href="#结果说到底还是得靠自己" class="headerlink" title="结果说到底还是得靠自己"></a>结果说到底还是得靠自己</h2><p>简单的讲，<code>uni-app</code> 的开发基础是 <code>Vue</code> 的三段式模板语法。<code>html</code>,<code>css</code>,<code>javascript</code>各司其职，被包裹在各自的模块之中。而微信小程序里，专有能力触发的事件会安置在 <code>Component</code> 构造器中——uni-app理所当然的没有这个 <code>Component</code> 构造器，想要使用 <code>bindinput</code> 自然也就变成了无稽之谈。</p>
+<p>不过，这一条走不通的路却给了我灵感。虽然没法检测用户的输入，但检测输入框的变动却是vue的拿手好戏。只要拿变动后的字符长度与变动前的进行比对，不就能判断出用户是否使用了粘贴这一招吗？</p>
+<p>手随心动。我马不停蹄地把想法化作现实：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  ……</span><br><span class="line">  <span class="tag">&lt;<span class="name">u-field</span></span></span><br><span class="line"><span class="tag">    <span class="attr">placeholder</span>=<span class="string">&quot;请输入密码&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">v-model</span>=<span class="string">&quot;password&quot;</span></span></span><br><span class="line"><span class="tag">    @<span class="attr">input</span>=<span class="string">&#x27;testPaste&#x27;</span></span></span><br><span class="line"><span class="tag">  /&gt;</span></span><br><span class="line">  ……</span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt; </span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">default</span>&#123;</span><br><span class="line">    <span class="function"><span class="title">data</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="keyword">return</span>&#123;</span><br><span class="line">        ……</span><br><span class="line">        password：<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="attr">testPasteVal</span>:<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">methods</span>:&#123;</span><br><span class="line">      ……</span><br><span class="line">      <span class="comment">//测试密码是否粘贴</span></span><br><span class="line">      <span class="function"><span class="title">testPaste</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">let</span> newlength = e.length - <span class="built_in">this</span>.testPasteVal.length</span><br><span class="line">        <span class="keyword">if</span>(newlength &gt; <span class="number">1</span>)&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">&quot;使用了粘贴!&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.testPasteVal = e</span><br><span class="line">      &#125;</span><br><span class="line">      ……</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>随后我便将这串代码拿到了测试上——效果相当令人满意。可比起 <code>bindinput</code> 法还是有一个缺陷：如果用户提前选中了原本的文字，那么如果粘贴的文本长度比原本的要短，就没法检测到问题所在了。</p>
+<p>但既然有题也就有解。LeetCode上就有这么道名为<code>Edit Distence</code>的题目来探讨两个字符串的最短编辑距离，而无数的做题家则已经把这道题解了个底朝天。正常的输入/删除操作只会有1的编辑距离，我们可以将这道题的解化用在这段程序上：如果检测到编辑距离大于1，则将用户输入前的值重新赋给 <code>password</code> ：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">……</span><br><span class="line"><span class="comment">//测试密码是否粘贴</span></span><br><span class="line">  <span class="function"><span class="title">testPaste</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> newlength = e.length - <span class="built_in">this</span>.testPasteVal.length</span><br><span class="line">  <span class="keyword">let</span> distance = <span class="built_in">this</span>.minDistance(<span class="built_in">this</span>.testPasteVal,e)</span><br><span class="line">  <span class="built_in">console</span>.log()</span><br><span class="line">  <span class="keyword">if</span>(newlength &gt; <span class="number">1</span> || distance &gt; <span class="number">1</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&quot;使用了粘贴!&quot;</span>)</span><br><span class="line">    <span class="built_in">this</span>.password = <span class="built_in">this</span>.testPasteVal</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.testPasteVal = <span class="built_in">this</span>.password</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.password)</span><br><span class="line">&#125;,</span><br><span class="line"><span class="comment">//计算编辑距离</span></span><br><span class="line">  <span class="function"><span class="title">minDistance</span>(<span class="params">str1, str2</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> length1 = str1.length;</span><br><span class="line">  <span class="keyword">const</span> length2 = str2.length;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!length1) &#123;</span><br><span class="line">    <span class="keyword">return</span> length2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!length2) &#123;</span><br><span class="line">    <span class="keyword">return</span> length1;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// i 为行，表示str1</span></span><br><span class="line">  <span class="comment">// j 为列，表示str2</span></span><br><span class="line">  <span class="keyword">const</span> r = [];</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; length1 + <span class="number">1</span>; i++) &#123;</span><br><span class="line">    r.push([]);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; length2 + <span class="number">1</span>; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span>(i === <span class="number">0</span>) &#123;</span><br><span class="line">        r[i][j] = j;</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (j === <span class="number">0</span>) &#123;</span><br><span class="line">        r[i][j] = i;</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span>(str1[i - <span class="number">1</span>] === str2[j - <span class="number">1</span>])&#123;</span><br><span class="line">        r[i][j] = r[i - <span class="number">1</span>][j - <span class="number">1</span>];</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        r[i][j] = <span class="built_in">Math</span>.min(r[i - <span class="number">1</span>][j ], r[i][j - <span class="number">1</span>], r[i - <span class="number">1</span>][j - <span class="number">1</span>]) + <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> r[length1][length2];</span><br><span class="line">&#125;,</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+
+<p>——看起来已经万无一失了，但是放进实机里却只能管住data里的数据而管不到前台的输入。找不着头绪的我，偶然在<a target="_blank" rel="noopener" href="https://www.cnblogs.com/sinosaurus/p/10963526.html">这篇文章</a>里找到了问题所在：我使用的组件并不是原生的<code>input</code> 而是uview再封装的 <code>u-field</code> ，为了将数据的变化暴露出来，必须使用 <code>$nextTick</code>进行额外处理。</p>
+<p>修改后的代码成了这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">……</span><br><span class="line"><span class="comment">//测试密码是否粘贴</span></span><br><span class="line">  <span class="function"><span class="title">testPaste</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">  <span class="comment">//既然采用了距离法，就没有必要做length比较了</span></span><br><span class="line">  <span class="keyword">let</span> distance = <span class="built_in">this</span>.minDistance(<span class="built_in">this</span>.testPasteVal,e)</span><br><span class="line">  <span class="keyword">if</span>(distance &gt; <span class="number">1</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&quot;使用了粘贴!&quot;</span>)</span><br><span class="line">    <span class="built_in">this</span>.$nextTick(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.password = <span class="built_in">this</span>.testPasteVal</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.testPasteVal = <span class="built_in">this</span>.password</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+
+<p>把这个版本的代码丢进测试——大功告成！苍旻再次用自己<del>谷歌</del>的力量下uni-app了一城！</p>
+
+            </article>
+            
+                <div class="share">
+                    <!--开启分享-->
+<div class="share-component" data-disabled="google,twitter,facebook" data-description="前言暂略，总之今天苍旻一如既往地和issues搏斗的时..."></div>
+
+
+<script src="/js/share.min.js"></script>
+
+
+                </div>    
+            
+
+            
+
+            
+<div class="comments">
+    <div id="gitalk-container"></div>
+        
+<script src="/js/gitalk.js"></script>
+
+        <script>
+            var gitalk = new Gitalk({
+                clientID: "28c298a3ce77869e79d3",
+                clientSecret: "7a1bbd121cba3e328121ef4e42bdd383207cc7b9",
+                repo: 'blog-gitment',
+                owner: 'SomiaWhiteRing',
+                admin: ['SomiaWhiteRing'],
+                id: decodeURI('/2021/11/10/%E6%9D%A5%E8%81%8A%E8%81%8Auni-app%E9%87%8C%E6%A3%80%E6%B5%8B%E7%94%A8%E6%88%B7%E7%B2%98%E8%B4%B4%E7%9A%84%E8%AF%9D%E9%A2%98/'),
+            })
+        gitalk.render('gitalk-container')
+        </script>
+</div>
+
+            
+
+        </div>
+        <div class="column one-fourth">
+            
+                
+                
+
+
+<h3>Post Directory</h3>
+
+<div id="post-directory-module">
+	<section class="post-directory">
+		<p><strong class="toc-title">文章目录</strong></p>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E5%86%99%E6%B3%95%E2%80%94%E2%80%94%E4%BB%80%E4%B9%88%E7%9A%84%E6%9E%9C%E7%84%B6%E8%A1%8C%E4%B8%8D%E9%80%9A"><span class="toc-text">原生写法——什么的果然行不通</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%95%8A%E7%AD%89%E7%AD%89%EF%BC%8C%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%BF%99%E4%B8%8D%E6%98%AF%E6%9C%89%E8%87%AA%E5%B7%B1%E7%9A%84%E8%A7%A3%E6%B3%95%E5%90%97%EF%BC%9F"><span class="toc-text">啊等等，小程序这不是有自己的解法吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E8%AF%B4%E5%88%B0%E5%BA%95%E8%BF%98%E6%98%AF%E5%BE%97%E9%9D%A0%E8%87%AA%E5%B7%B1"><span class="toc-text">结果说到底还是得靠自己</span></a></li></ol>
+	</section>
+</div>
+            
+        </div>
+    </div>
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2021
+                <span title="yumemor">SomiaWhiteRing</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/SomiaWhiteRing" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/categories/"  title="分类">分类</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/open-source/"  title="开源项目">开源项目</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/message/"  title="留言板">留言板</a>
+                  </li>
+            
+        </ul>
+
+        <div>
+            <span title="hexo">由 <a target="_blank" rel="noopener" href="https://hexo.io/">hexo</a> 驱动</span>
+            <span title="yumemor">并使用基于 <a target="_blank" rel="noopener" href="https://github.com/yumemor/hexo-theme-primer">primer</a> 的主题</span><br>
+        </div>
+        
+    </div>
+</footer>
+
+		
+<script src="/js/geopattern.js"></script>
+
+		
+<script src="/js/highlight.pack.js"></script>
+
+		
+<script src="/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+		
+			
+<script src="/js/toc.js"></script>
+
+		
+
+		
+<script src="/js/index.js"></script>
+
+
+		 
+<script src="/js/popular_repo.js"></script>
+ 
+
+	</body>
+</html>

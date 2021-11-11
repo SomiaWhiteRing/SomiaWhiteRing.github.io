@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>苍旻之匣 | 在primer主题上魔改加入gitalk评论系统</title>
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/lib/fancybox/jquery.fancybox-1.3.4.css">
+
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/" title="苍旻之匣"><span class="octicon octicon-mark-github"></span> 苍旻之匣</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="分类">分类</a>
+        
+              
+              <a href="/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="开源项目">开源项目</a>
+        
+              
+              <a href="/message/"  class=" site-header-nav-item hvr-underline-from-center" title="留言板">留言板</a>
+        
+      </nav>
+  </div>
+</header>
+
+	
+<section class="collection-head geopattern" data-pattern-id="在primer主题上魔改加入gitalk评论系统" >
+    <div class="container">
+        <div class="collection-title">
+            <h1 class="collection-header">
+                在primer主题上魔改加入gitalk评论系统
+            </h1>
+            
+                <div class="collection-info">
+                    <span class="meta-info">
+                        <span class="octicon octicon-calendar"></span>
+                        <time datetime="2021-08-31T05:58:49.000Z" itemprop="datePublished">2021-08-31</time>
+                    </span>
+                    
+                        <span class="meta-info">
+                            <span class="octicon octicon-file-directory"></span>
+                            <a href='/categories/Blog/' title=''>Blog</a>
+                        </span>
+                    
+                </div>
+            
+        </div>
+    </div>
+</section>
+	<section class="container">
+    <div class="columns">
+        <div class="column  three-fourths " >
+            <article class="article-content markdown-body">
+                <p>primer这个主题最后一次更新的时候，多说才刚刚关站不久，主题的制作者留下了Disqus和gitment两个备选项就对这个项目撒手不管脱离战线。而2021年的今天，gitment也成为了被放弃维护的烂尾项目的一员，disqus则是被封印在墙外难以正常使用。于是作为迟到了好几年的使用者，必须为评论系统找一份新的归宿——而顺理成章的，我挑上了以gitment继任者自居的gitalk。</p>
+<span id="more"></span>
+
+<h2 id="找出gitment在原项目中的配置"><a href="#找出gitment在原项目中的配置" class="headerlink" title="找出gitment在原项目中的配置"></a>找出gitment在原项目中的配置</h2><p><img src="vscode%E7%9A%84%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C.png"></p>
+<p>多亏了vscode的全局搜索功能，我们很容易就能够定位到项目中运用了gitment的文件。其中，<code>_config.yml</code>指示了传达给gitment插件的参数，<code>gitment-comments.js</code>与<code>article-post.ejs</code>是负责将gitment插件实施到页面的html模块，<code>style.styl</code>负责引入gitment的css文件，<code>default.css</code>与<code>gitment.browser.js</code>则就是gitment插件的js与css文件。接下来，就让我们手把手的引领gitalk对gitment进行一次“鸠占鹊巢”。</p>
+<h2 id="先从html部分开始讲起"><a href="#先从html部分开始讲起" class="headerlink" title="先从html部分开始讲起"></a>先从html部分开始讲起</h2><p>让我们先来看看<code>article-post.ejs</code>中关于引入gitment的部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;%if(theme.disqus_username)&#123;%&gt;</span><br><span class="line">  &lt;%- partial(&#x27;_widget/disqus-comments&#x27;,&#123;</span><br><span class="line">      key: post.slug,</span><br><span class="line">      title: post.title,</span><br><span class="line">      url: config.url+url_for(post.path)</span><br><span class="line">  &#125;) %&gt;</span><br><span class="line">&lt;%&#125; else &#123;%&gt;</span><br><span class="line">  &lt;%- partial(&#x27;_widget/gitment-comments&#x27;,&#123;</span><br><span class="line">      key: post.slug,</span><br><span class="line">      title: post.title,</span><br><span class="line">      url: url_for(post.path)</span><br><span class="line">  &#125;) %&gt;</span><br><span class="line">&lt;%&#125;%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以简单的看出，如果你在<code>_config.yml</code>中填入了<code>disqus_username</code>，这个模块就会引导<code>_widget/disqus-comments</code>以渲染disqus评论区，否则会引导<code>_widget/gitment-comments</code>来渲染gitment评论区。在gitment已经不适用的现在，我们可以将后半部分的<code>gitment-comments</code>改为<br><code>gitalk-comments</code>，并在<code>_widget</code>文件夹下创建一个名称相对应的渲染模块。<br>至于这个渲染模块怎么创建，我们可以参考参考<code>gitment-comments</code>的写法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gitment.browser&#x27;) %&gt;</span><br><span class="line">         &lt;script&gt;</span><br><span class="line">            var gitment = new Gitment(&#123;</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                oauth: &#123;</span><br><span class="line">                    client_id: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                    client_secret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        gitment.render(&#x27;container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>同时，我们可以拿出gitalk文档中的引用方法进行比对：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var gitalk = new Gitalk(&#123;</span><br><span class="line">  clientID: &#x27;GitHub Application Client ID&#x27;,</span><br><span class="line">  clientSecret: &#x27;GitHub Application Client Secret&#x27;,</span><br><span class="line">  repo: &#x27;GitHub repo&#x27;,</span><br><span class="line">  owner: &#x27;GitHub repo owner&#x27;,</span><br><span class="line">  admin: [&#x27;GitHub repo owner and collaborators, only these guys can initialize github issues&#x27;],</span><br><span class="line">  id: location.pathname,      // Ensure uniqueness and length less than 50</span><br><span class="line">  distractionFreeMode: false  // Facebook-like distraction free mode</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">gitalk.render(&#x27;gitalk-container&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，gitalk与gitment的设计方式是一脉相承的。我们只需要依照gitment中配置好的接口将gitalk的语句改头换面进去就行了。下面展示的是修改完成之后的结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gitalk&#x27;) %&gt;</span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            var gitalk = new Gitalk(&#123;</span><br><span class="line">                clientID: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                clientSecret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                admin: [&#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,],</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">            &#125;)</span><br><span class="line">        gitalk.render(&#x27;gitalk-container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="在本地引入gitalk的css与js库"><a href="#在本地引入gitalk的css与js库" class="headerlink" title="在本地引入gitalk的css与js库"></a>在本地引入gitalk的css与js库</h2><p>在前文里我们修改了gitment中属于html的部分。而js与css部分则更加单纯——我们只需要从gitalk的github仓库上拖下来对应的js与css文件再完成引入就行了。js的引入我们已经在上文中做了修改（<code>&lt;%- js(&#39;js/gitment.browser&#39;) %&gt;</code>被修改为<code>&lt;%- js(&#39;js/gitalk&#39;) %&gt;</code>），css的引入则位于<code>style.styl</code>文件中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//gitmnet</span><br><span class="line">@import &quot;_vendor/gitment/default.css&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们将原本的引入文本注释掉，重新加入gitalk的css</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//gitment</span><br><span class="line">//@import &quot;_vendor/gitment/default.css&quot;</span><br><span class="line"></span><br><span class="line">//gitalk</span><br><span class="line">@import &quot;_vendor/gitalk/default.css&quot;</span><br></pre></td></tr></table></figure>
+
+<p>最后将gitalk仓库中dist文件夹里的文件拖到本地我们写好的对应位置，gitalk的引入就大功告成了……吗？</p>
+<p><img src="%E6%9C%89%E4%BA%BA%E5%8F%88%E5%86%99bug%E4%BA%86_%E5%95%8A_%E6%88%91%E4%B8%8D%E8%AF%B4%E6%98%AF%E8%B0%81.png"></p>
+<p>笑死，我又在写bug哦。</p>
+<h2 id="Bug排除"><a href="#Bug排除" class="headerlink" title="Bug排除"></a>Bug排除</h2><p>然后，我开启了漫长的查bug之旅……</p>
+<p>首先是发现自己把<code>gitalk</code>的名字打成了<code>gittalk</code>，打开搜索工具发现出现了一百多条gittalk这个本来不该存在的名字。一键全局替换……好的没有搞定bug依旧好端端的呆在那里。</p>
+<p>之后我又拿出原本gitment版本渲染完成的界面进行比对，发现修改成gitalk后浏览器的<code>container</code>标签内不再渲染内容而这本来应该渲染出评论框，于是我把目光投向了渲染出评论的<code>render</code>……结果很相近了，但只差一步，我倒在自己看不懂的六万多行的代码之海里找不着头绪。</p>
+<p>就在此时我才突然想到也许应该再看看官方文档……直到这个时候我才发现，<code>gitalk</code>的评论区是渲染在<code>gitalk-container</code>这个标签里的，也就是说必须要把<code>container</code>改为<code>gitalk-container</code>才能正常运行。于是我试着再度更改了<code>gitment-comments</code>的写法……</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;comments&quot;&gt;</span><br><span class="line">    &lt;div id=&quot;gitalk-container&quot;&gt;&lt;/div&gt;</span><br><span class="line">        &lt;%- js(&#x27;js/gitalk&#x27;) %&gt;</span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            var gitalk = new Gitalk(&#123;</span><br><span class="line">                clientID: &quot;&lt;%= theme.gitment_client_id %&gt;&quot;,</span><br><span class="line">                clientSecret: &quot;&lt;%= theme.gitment_client_secret %&gt;&quot;,</span><br><span class="line">                repo: &#x27;&lt;%= theme.gitment_repo %&gt;&#x27;,</span><br><span class="line">                owner: &#x27;&lt;%= theme.gitment_owner %&gt;&#x27;,</span><br><span class="line">                admin: [&#x27;&lt;%= theme.gitment_owner %&gt;&#x27;],</span><br><span class="line">                id: &#x27;&lt;%=url%&gt;&#x27;,</span><br><span class="line">            &#125;)</span><br><span class="line">        gitalk.render(&#x27;gitalk-container&#x27;)</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>好的来吧我要按下去(<code>hexo s</code>)了！</p>
+<p><img src="OHHHHHHHH.png"></p>
+<p><font size=6>大 功 告 成！</font></p>
+<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>这次折腾完加上上一篇感觉得整合整合把自己改掉的部分丢到自己fork的那个分支上……花了这么多时间折腾上这些只是这样写成博客太可惜了。话说回来这样算不算参加开源项目？所以那些参加开源项目的人都是用这种心情去改别人的代码的吗？！（哭笑不得）</p>
+<p>另外就是为什么在Github pages上更新文章不算在commit里，周末两天的白框框看的我心在滴血，可恶。</p>
+
+            </article>
+            
+                <div class="share">
+                    <!--开启分享-->
+<div class="share-component" data-disabled="google,twitter,facebook" data-description="primer这个主题最后一次更新的时候，多说才刚刚关站..."></div>
+
+
+<script src="/js/share.min.js"></script>
+
+
+                </div>    
+            
+
+            
+
+            
+<div class="comments">
+    <div id="gitalk-container"></div>
+        
+<script src="/js/gitalk.js"></script>
+
+        <script>
+            var gitalk = new Gitalk({
+                clientID: "28c298a3ce77869e79d3",
+                clientSecret: "7a1bbd121cba3e328121ef4e42bdd383207cc7b9",
+                repo: 'blog-gitment',
+                owner: 'SomiaWhiteRing',
+                admin: ['SomiaWhiteRing'],
+                id: decodeURI('/2021/08/31/%E5%9C%A8primer%E4%B8%BB%E9%A2%98%E4%B8%8A%E9%AD%94%E6%94%B9%E5%8A%A0%E5%85%A5gitalk%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/'),
+            })
+        gitalk.render('gitalk-container')
+        </script>
+</div>
+
+            
+
+        </div>
+        <div class="column one-fourth">
+            
+                
+                
+
+
+<h3>Post Directory</h3>
+
+<div id="post-directory-module">
+	<section class="post-directory">
+		<p><strong class="toc-title">文章目录</strong></p>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%BE%E5%87%BAgitment%E5%9C%A8%E5%8E%9F%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-text">找出gitment在原项目中的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E4%BB%8Ehtml%E9%83%A8%E5%88%86%E5%BC%80%E5%A7%8B%E8%AE%B2%E8%B5%B7"><span class="toc-text">先从html部分开始讲起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%9C%AC%E5%9C%B0%E5%BC%95%E5%85%A5gitalk%E7%9A%84css%E4%B8%8Ejs%E5%BA%93"><span class="toc-text">在本地引入gitalk的css与js库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bug%E6%8E%92%E9%99%A4"><span class="toc-text">Bug排除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5"><span class="toc-text">碎碎念</span></a></li></ol>
+	</section>
+</div>
+            
+        </div>
+    </div>
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2021
+                <span title="yumemor">SomiaWhiteRing</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/SomiaWhiteRing" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/categories/"  title="分类">分类</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/open-source/"  title="开源项目">开源项目</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/message/"  title="留言板">留言板</a>
+                  </li>
+            
+        </ul>
+
+        <div>
+            <span title="hexo">由 <a target="_blank" rel="noopener" href="https://hexo.io/">hexo</a> 驱动</span>
+            <span title="yumemor">并使用基于 <a target="_blank" rel="noopener" href="https://github.com/yumemor/hexo-theme-primer">primer</a> 的主题</span><br>
+        </div>
+        
+    </div>
+</footer>
+
+		
+<script src="/js/geopattern.js"></script>
+
+		
+<script src="/js/highlight.pack.js"></script>
+
+		
+<script src="/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+		
+			
+<script src="/js/toc.js"></script>
+
+		
+
+		
+<script src="/js/index.js"></script>
+
+
+		 
+<script src="/js/popular_repo.js"></script>
+ 
+
+	</body>
+</html>
