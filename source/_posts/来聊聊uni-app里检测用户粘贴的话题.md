@@ -7,7 +7,7 @@ tags:
 
 前言暂略，总之今天苍旻一如既往地和issues搏斗的时候，收到了这么一个需求：
 
-![看起来很简单对吧](密码框中未限制不可粘贴输入.png)
+![密码框中未限制不可粘贴输入.png](密码框中未限制不可粘贴输入.png)
 
 想着这有什么的难的的苍旻随手按了个确定，然后就寻找起了解决办法——然而他这时还没想到的是，他手头的工具不是延展性高到无所不能的原生HTML三件套；也不是虽然API压得乱七八糟但好歹有无数人陪着一同戴着镣铐跳舞的微信wxml；而是套了两层三层娃，为了兼容性在两者的语法中撕开一条血路的uni-app。
 
@@ -27,7 +27,7 @@ tags:
 
 看起来简直是天衣无缝的计划——事实上也毫无漏洞，毕竟使用这个事件的场景基本不是密码就是银行卡号，唯一的漏洞如邮箱后缀之类的定型文也基本都在事件的狩猎范围之外。而在我兴致勃勃的想要用上这一招的时候，开发者工具的报错给了我当头一棒：
 
-```
+```nohighlight
 Component "pages/login/login" does not have a method "testPaste" to handle event "input".
 ```
 
@@ -39,7 +39,7 @@ Component "pages/login/login" does not have a method "testPaste" to handle event
 
 手随心动。我马不停蹄地把想法化作现实：
 
-```
+```html
 <template>
   ……
   <u-field
@@ -49,7 +49,9 @@ Component "pages/login/login" does not have a method "testPaste" to handle event
   />
   ……
 </template>
- 
+```
+
+```javascript
 <script> 
   export default{
     data(){
@@ -77,4 +79,79 @@ Component "pages/login/login" does not have a method "testPaste" to handle event
 
 随后我便将这串代码拿到了测试上——效果相当令人满意。可比起 `bindinput` 法还是有一个缺陷：如果用户提前选中了原本的文字，那么如果粘贴的文本长度比原本的要短，就没法检测到问题所在了。
 
-但既然有题也就有解。LeetCode上有道名为`Edit Distence`的题目
+但既然有题也就有解。LeetCode上就有这么道名为`Edit Distence`的题目来探讨两个字符串的最短编辑距离，而无数的做题家则已经把这道题解了个底朝天。正常的输入/删除操作只会有1的编辑距离，我们可以将这道题的解化用在这段程序上：如果检测到编辑距离大于1，则将用户输入前的值重新赋给 `password` ：
+
+```javascript
+  ……
+  //测试密码是否粘贴
+    testPaste(e){
+    let newlength = e.length - this.testPasteVal.length
+    let distance = this.minDistance(this.testPasteVal,e)
+    console.log()
+    if(newlength > 1 || distance > 1){
+      console.log("使用了粘贴!")
+      this.password = this.testPasteVal
+    }else{
+      this.testPasteVal = this.password
+    }
+    console.log(this.password)
+  },
+  //计算编辑距离
+    minDistance(str1, str2) {
+    const length1 = str1.length;
+    const length2 = str2.length;
+
+    if(!length1) {
+      return length2;
+    }
+
+    if(!length2) {
+      return length1;
+    }
+
+    // i 为行，表示str1
+    // j 为列，表示str2
+    const r = [];
+    for(let i = 0; i < length1 + 1; i++) {
+      r.push([]);
+      for(let j = 0; j < length2 + 1; j++) {
+        if(i === 0) {
+          r[i][j] = j;
+        } else if (j === 0) {
+          r[i][j] = i;
+        } else if(str1[i - 1] === str2[j - 1]){
+          r[i][j] = r[i - 1][j - 1];
+        } else {
+          r[i][j] = Math.min(r[i - 1][j ], r[i][j - 1], r[i - 1][j - 1]) + 1;
+        }
+      }
+    }
+
+    return r[length1][length2];
+  },
+  ……
+```
+
+——看起来已经万无一失了，但是放进实机里却只能管住data里的数据而管不到前台的输入。找不着头绪的我，偶然在[这篇文章](https://www.cnblogs.com/sinosaurus/p/10963526.html)里找到了问题所在：我使用的组件并不是原生的`input` 而是uview再封装的 `u-field` ，为了将数据的变化暴露出来，必须使用 `$nextTick`进行额外处理。
+
+修改后的代码成了这样：
+
+```javascript
+  ……
+  //测试密码是否粘贴
+    testPaste(e){
+    //既然采用了距离法，就没有必要做length比较了
+    let distance = this.minDistance(this.testPasteVal,e)
+    if(distance > 1){
+      console.log("使用了粘贴!")
+      this.$nextTick(() => {
+        this.password = this.testPasteVal
+      })
+    }else{
+      this.testPasteVal = this.password
+    }
+  },
+  ……
+```
+
+把这个版本的代码丢进测试——大功告成！苍旻再次用自己~~谷歌~~的力量下uni-app了一城！
