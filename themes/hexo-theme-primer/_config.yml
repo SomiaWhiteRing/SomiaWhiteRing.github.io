@@ -22,7 +22,7 @@ profile:
 
 github: 
 	username: SomiaWhiteRing
-  popular_repos: [vue-notes,JS2048]
+  popular_repos: [vue-notes,JS2048,yinglish-web]
 
 search: local #google｜local
 
