@@ -230,7 +230,7 @@
             var handleGithub = function(){
                 var popularContainer = $(".popular-container");
 
-                var repos = "vue-notes,JS2048".split(",");
+                var repos = "vue-notes,JS2048,yinglish-web".split(",");
                 for(var i in repos){
                     var name = repos[i];
                     $.get("https://api.github.com/repos/SomiaWhiteRing/"+name,handle);
@@ -322,6 +322,7 @@
         <div>
             <span title="hexo">由 <a target="_blank" rel="noopener" href="https://hexo.io/">hexo</a> 驱动</span>
             <span title="yumemor">并使用基于 <a target="_blank" rel="noopener" href="https://github.com/yumemor/hexo-theme-primer">primer</a> 的主题</span><br>
+            <span title="beian"><a target="_blank" href="https://beian.miit.gov.cn">闽ICP备2022001226号-1</a></span>
         </div>
         
     </div>
