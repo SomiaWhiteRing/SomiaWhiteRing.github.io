@@ -10,7 +10,7 @@ primer这个主题最后一次更新的时候，多说才刚刚关站不久，�
 
 ## 找出gitment在原项目中的配置
 
-![](vscode的搜索结果.png)
+![vscode的搜索结果](vscode的搜索结果.png)
 
 多亏了vscode的全局搜索功能，我们很容易就能够定位到项目中运用了gitment的文件。其中，`_config.yml`指示了传达给gitment插件的参数，`gitment-comments.js`与`article-post.ejs`是负责将gitment插件实施到页面的html模块，`style.styl`负责引入gitment的css文件，`default.css`与`gitment.browser.js`则就是gitment插件的js与css文件。接下来，就让我们手把手的引领gitalk对gitment进行一次“鸠占鹊巢”。
 
@@ -18,7 +18,7 @@ primer这个主题最后一次更新的时候，多说才刚刚关站不久，�
 
 让我们先来看看`article-post.ejs`中关于引入gitment的部分：
 
-```
+``` javascript
 <%if(theme.disqus_username){%>
   <%- partial('_widget/disqus-comments',{
       key: post.slug,
@@ -38,7 +38,7 @@ primer这个主题最后一次更新的时候，多说才刚刚关站不久，�
 `gitalk-comments`，并在`_widget`文件夹下创建一个名称相对应的渲染模块。
 至于这个渲染模块怎么创建，我们可以参考参考`gitment-comments`的写法：
 
-```
+``` javascript
 <div class="comments">
     <div id="container"></div>
         <%- js('js/gitment.browser') %>
@@ -59,7 +59,7 @@ primer这个主题最后一次更新的时候，多说才刚刚关站不久，�
 
 同时，我们可以拿出gitalk文档中的引用方法进行比对：
 
-```
+``` javascript
 var gitalk = new Gitalk({
   clientID: 'GitHub Application Client ID',
   clientSecret: 'GitHub Application Client Secret',
@@ -75,7 +75,7 @@ gitalk.render('gitalk-container')
 
 可以看出，gitalk与gitment的设计方式是一脉相承的。我们只需要依照gitment中配置好的接口将gitalk的语句改头换面进去就行了。下面展示的是修改完成之后的结果。
 
-```
+``` javascript
 <div class="comments">
     <div id="container"></div>
         <%- js('js/gitalk') %>
@@ -97,14 +97,14 @@ gitalk.render('gitalk-container')
 
 在前文里我们修改了gitment中属于html的部分。而js与css部分则更加单纯——我们只需要从gitalk的github仓库上拖下来对应的js与css文件再完成引入就行了。js的引入我们已经在上文中做了修改（`<%- js('js/gitment.browser') %>`被修改为`<%- js('js/gitalk') %>`），css的引入则位于`style.styl`文件中：
 
-```
+``` javascript
 //gitmnet
 @import "_vendor/gitment/default.css"
 ```
 
 我们将原本的引入文本注释掉，重新加入gitalk的css
 
-```
+``` javascript
 //gitment
 //@import "_vendor/gitment/default.css"
 
@@ -114,7 +114,7 @@ gitalk.render('gitalk-container')
 
 最后将gitalk仓库中dist文件夹里的文件拖到本地我们写好的对应位置，gitalk的引入就大功告成了……吗？
 
-![](有人又写bug了_啊_我不说是谁.png)
+![有人又写bug了_啊_我不说是谁](有人又写bug了_啊_我不说是谁.png)
 
 笑死，我又在写bug哦。
 
@@ -128,7 +128,7 @@ gitalk.render('gitalk-container')
 
 就在此时我才突然想到也许应该再看看官方文档……直到这个时候我才发现，`gitalk`的评论区是渲染在`gitalk-container`这个标签里的，也就是说必须要把`container`改为`gitalk-container`才能正常运行。于是我试着再度更改了`gitment-comments`的写法……
 
-```
+``` javascript
 <div class="comments">
     <div id="gitalk-container"></div>
         <%- js('js/gitalk') %>
@@ -148,7 +148,7 @@ gitalk.render('gitalk-container')
 
 好的来吧我要按下去(`hexo s`)了！
 
-![](OHHHHHHHH.png)
+![OHHHHHHHH](OHHHHHHHH.png)
 
 <font size=6>大 功 告 成！</font>
 
